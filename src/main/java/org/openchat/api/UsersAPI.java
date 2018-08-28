@@ -13,6 +13,7 @@ public class UsersAPI {
 
     private String text;
     private Clock clock;
+    private String userId;
 
     public UsersAPI(Clock clock) {
         this.clock = clock;
@@ -24,6 +25,7 @@ public class UsersAPI {
             JsonObject post = new JsonObject();
             post.add("text", text);
             post.add("dateTime", format(clock.now()));
+            post.add("userId", userId);
             json.add(post);
         }
         return json.toString();
@@ -33,7 +35,8 @@ public class UsersAPI {
         return now.format(DATETIME_FORMATTER);
     }
 
-    public void createPost(String text) {
+    public void createPost(String userId, String text) {
+        this.userId = userId;
         this.text = text;
     }
 }

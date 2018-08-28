@@ -9,6 +9,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.mockito.BDDMockito.given;
 
@@ -38,20 +39,22 @@ public class Users_API_should {
     @Test
     public void return_the_message_when_one_has_been_posted() throws JSONException {
         String firstPostText = "first post!";
-        timeIs(LocalDateTime.of(2018, 1, 10, 9, 0, 0));
-        usersAPI.createPost(firstPostText);
+        timeIs(2018, 1, 10, 9, 0, 0);
+        String userId = UUID.randomUUID().toString();
+        usersAPI.createPost(userId, firstPostText);
 
         String actual = usersAPI.retrievePosts();
 
         String firstPostTimestamp = "2018-01-10T09:00:00Z";
         String expected = "[{" +
                 "\"text\":\"" + firstPostText + "\"," +
-                "\"dateTime\":\"" + firstPostTimestamp + "\"" +
+                "\"dateTime\":\"" + firstPostTimestamp + "\"," +
+                "\"userId\":\"" + userId + "\"" +
                 "}]";
         JSONAssert.assertEquals(expected, actual, STRICT);
     }
 
-    private void timeIs(LocalDateTime time) {
-        given(clock.now()).willReturn(time);
+    private void timeIs(int year, int month, int day, int hour, int minute, int second) {
+        given(clock.now()).willReturn(LocalDateTime.of(year, month, day, hour, minute, second));
     }
 }
