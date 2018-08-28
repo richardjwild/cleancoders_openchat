@@ -9,8 +9,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
+import static java.util.UUID.randomUUID;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,33 +36,41 @@ public class Users_API_should {
         String actual = usersAPI.retrievePosts();
 
         String expected = "[]";
-        JSONAssert.assertEquals(expected, actual, STRICT);
+        assertJson(actual, expected);
     }
 
     @Test
     public void return_the_message_when_one_has_been_posted() throws JSONException {
-        String firstPostText = "first post!";
+        String text = "first post!";
+        String postId = randomUUID().toString();
+        String userId = randomUUID().toString();
+
         timeIs(2018, 1, 10, 9, 0, 0);
-        String postId = nextValueForPostIdGenerator();
-        String userId = UUID.randomUUID().toString();
-        usersAPI.createPost(userId, firstPostText);
+        nextPostIdIs(postId);
+        usersAPI.createPost(userId, text);
 
         String actual = usersAPI.retrievePosts();
 
-        String firstPostTimestamp = "2018-01-10T09:00:00Z";
-        String expected = "[{" +
-                "\"text\":\"" + firstPostText + "\"," +
-                "\"dateTime\":\"" + firstPostTimestamp + "\"," +
+        String timestamp = "2018-01-10T09:00:00Z";
+        String expected = "[" + postAsJson(postId, userId, timestamp, text) + "]";
+        assertJson(actual, expected);
+    }
+
+    private String postAsJson(String postId, String userId, String timestamp, String text) {
+        return "{" +
+                "\"text\":\"" + text + "\"," +
+                "\"dateTime\":\"" + timestamp + "\"," +
                 "\"userId\":\"" + userId + "\"," +
                 "\"postId\":\"" + postId + "\"" +
-                "}]";
+                "}";
+    }
+
+    private void assertJson(String actual, String expected) throws JSONException {
         JSONAssert.assertEquals(expected, actual, STRICT);
     }
 
-    private String nextValueForPostIdGenerator() {
-        String randomUUID = UUID.randomUUID().toString();
+    private void nextPostIdIs(String randomUUID) {
         given(postIdGenerator.nextId()).willReturn(randomUUID);
-        return randomUUID;
     }
 
     private void timeIs(int year, int month, int day, int hour, int minute, int second) {
