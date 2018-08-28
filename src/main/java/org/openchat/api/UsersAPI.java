@@ -13,10 +13,12 @@ public class UsersAPI {
 
     private String text;
     private Clock clock;
+    private PostIdGenerator postIdGenerator;
     private String userId;
 
-    public UsersAPI(Clock clock) {
+    public UsersAPI(Clock clock, PostIdGenerator postIdGenerator) {
         this.clock = clock;
+        this.postIdGenerator = postIdGenerator;
     }
 
     public String retrievePosts() {
@@ -26,6 +28,7 @@ public class UsersAPI {
             post.add("text", text);
             post.add("dateTime", format(clock.now()));
             post.add("userId", userId);
+            post.add("postId", postIdGenerator.nextId());
             json.add(post);
         }
         return json.toString();

@@ -21,11 +21,14 @@ public class Users_API_should {
     @Mock
     private Clock clock;
 
+    @Mock
+    private PostIdGenerator postIdGenerator;
+
     private UsersAPI usersAPI;
 
     @Before
     public void setup() {
-        usersAPI = new UsersAPI(clock);
+        usersAPI = new UsersAPI(clock, postIdGenerator);
     }
 
     @Test
@@ -40,6 +43,7 @@ public class Users_API_should {
     public void return_the_message_when_one_has_been_posted() throws JSONException {
         String firstPostText = "first post!";
         timeIs(2018, 1, 10, 9, 0, 0);
+        String postId = nextValueForPostIdGenerator();
         String userId = UUID.randomUUID().toString();
         usersAPI.createPost(userId, firstPostText);
 
@@ -49,9 +53,16 @@ public class Users_API_should {
         String expected = "[{" +
                 "\"text\":\"" + firstPostText + "\"," +
                 "\"dateTime\":\"" + firstPostTimestamp + "\"," +
-                "\"userId\":\"" + userId + "\"" +
+                "\"userId\":\"" + userId + "\"," +
+                "\"postId\":\"" + postId + "\"" +
                 "}]";
         JSONAssert.assertEquals(expected, actual, STRICT);
+    }
+
+    private String nextValueForPostIdGenerator() {
+        String randomUUID = UUID.randomUUID().toString();
+        given(postIdGenerator.nextId()).willReturn(randomUUID);
+        return randomUUID;
     }
 
     private void timeIs(int year, int month, int day, int hour, int minute, int second) {
