@@ -11,6 +11,8 @@ import spark.Response;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.eclipse.jetty.http.HttpStatus.CREATED_201;
 import static org.eclipse.jetty.http.HttpStatus.OK_200;
@@ -23,7 +25,7 @@ public class UsersAPI {
     private Clock clock;
     private PostIdGenerator postIdGenerator;
 
-    private Post post;
+    private List<Post> posts = new ArrayList<>();
 
     public UsersAPI(Clock clock, PostIdGenerator postIdGenerator) {
         this.clock = clock;
@@ -32,7 +34,7 @@ public class UsersAPI {
 
     public String retrievePosts(Request request, Response response) {
         JsonArray json = new JsonArray();
-        if (post != null) {
+        for (Post post : posts) {
             json.add(jsonPost(post));
         }
         response.type(ContentType.APPLICATION_JSON);
@@ -42,11 +44,12 @@ public class UsersAPI {
 
     public String createPost(Request request, Response response) {
         JsonObject jsonBody = Json.parse(request.body()).asObject();
-        this.post = new Post(
+        Post post = new Post(
                 request.params("userId"),
                 jsonBody.getString("text", null),
                 clock.now(),
                 postIdGenerator.nextId());
+        posts.add(post);
         response.status(CREATED_201);
         response.type(ContentType.APPLICATION_JSON);
         return jsonPost(post).toString();
