@@ -17,10 +17,7 @@ public class UsersAPI {
     private Clock clock;
     private PostIdGenerator postIdGenerator;
 
-    private String postId;
-    private String userId;
-    private LocalDateTime dateTime;
-    private String text;
+    private Post post;
 
     public UsersAPI(Clock clock, PostIdGenerator postIdGenerator) {
         this.clock = clock;
@@ -29,9 +26,8 @@ public class UsersAPI {
 
     public String retrievePosts(Request request, Response response) {
         JsonArray json = new JsonArray();
-        if (text != null) {
-            JsonObject post = jsonPost(postId, userId, dateTime, text);
-            json.add(post);
+        if (post != null) {
+            json.add(jsonPost(post));
         }
         response.type("application/json");
         response.status(200);
@@ -39,24 +35,24 @@ public class UsersAPI {
     }
 
     public String createPost(Request request, Response response) {
-        this.userId = request.params("userId");
-        JsonObject json = Json.parse(request.body()).asObject();
-        this.text = json.getString("text", null);
-        this.dateTime = clock.now();
-        this.postId = postIdGenerator.nextId();
+        JsonObject jsonBody = Json.parse(request.body()).asObject();
+        this.post = new Post(
+                request.params("userId"),
+                jsonBody.getString("text", null),
+                clock.now(),
+                postIdGenerator.nextId());
         response.status(201);
         response.type("text/plain");
-        JsonObject post = jsonPost(postId, userId, dateTime, text);
-        return post.toString();
+        return jsonPost(post).toString();
     }
 
-    private JsonObject jsonPost(String postId, String userId, LocalDateTime dateTime, String text) {
-        JsonObject post = new JsonObject();
-        post.add("text", text);
-        post.add("dateTime", format(dateTime));
-        post.add("userId", userId);
-        post.add("postId", postId);
-        return post;
+    private JsonObject jsonPost(Post post) {
+        JsonObject json = new JsonObject();
+        json.add("text", post.text());
+        json.add("dateTime", format(post.dateTime()));
+        json.add("userId", post.userId());
+        json.add("postId", post.postId());
+        return json;
     }
 
     private String format(LocalDateTime now) {
