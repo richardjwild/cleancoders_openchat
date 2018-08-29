@@ -53,6 +53,7 @@ public class Users_API_should {
 
     @Test
     public void echo_back_the_created_post() throws JSONException {
+        givenTimeIs(2018, 8, 29, 8, 16, 23);
         String actual = createPost(POST_ID, USER_ID, POST_TEXT);
 
         String timestamp = "2018-08-29T08:16:23Z";
@@ -63,8 +64,10 @@ public class Users_API_should {
 
     @Test
     public void retrieve_the_message_given_one_has_been_posted() throws JSONException {
+        givenTimeIs(2018, 8, 29, 8, 16, 23);
         createPost(POST_ID, USER_ID, POST_TEXT);
 
+        givenTimeIs(2018, 8, 30, 14, 25, 47);
         String actual = usersAPI.retrievePosts(request, response);
 
         String timestamp = "2018-08-29T08:16:23Z";
@@ -74,7 +77,6 @@ public class Users_API_should {
     }
 
     private String createPost(String postId, String userId, String text) {
-        givenTimeIs(2018, 8, 29, 8, 16, 23);
         givenNextPostIdIs(postId);
         givenPathParameter("userId", userId);
         givenRequestBody("{\"text\":\"" + text + "\"}");

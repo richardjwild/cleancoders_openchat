@@ -18,6 +18,7 @@ public class UsersAPI {
     private Clock clock;
     private PostIdGenerator postIdGenerator;
     private String userId;
+    private LocalDateTime dateTime;
 
     public UsersAPI(Clock clock, PostIdGenerator postIdGenerator) {
         this.clock = clock;
@@ -29,7 +30,7 @@ public class UsersAPI {
         if (text != null) {
             JsonObject post = new JsonObject();
             post.add("text", text);
-            post.add("dateTime", format(clock.now()));
+            post.add("dateTime", format(dateTime));
             post.add("userId", userId);
             post.add("postId", postIdGenerator.nextId());
             json.add(post);
@@ -47,11 +48,12 @@ public class UsersAPI {
         this.userId = request.params("userId");
         JsonObject json = Json.parse(request.body()).asObject();
         this.text = json.getString("text", null);
+        this.dateTime = clock.now();
         response.status(201);
         response.type("text/plain");
         JsonObject post = new JsonObject();
         post.add("text", text);
-        post.add("dateTime", format(clock.now()));
+        post.add("dateTime", format(dateTime));
         post.add("userId", userId);
         post.add("postId", postIdGenerator.nextId());
         return post.toString();
