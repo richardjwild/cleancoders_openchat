@@ -21,7 +21,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class Users_API_should {
+public class UsersAPI_should {
 
     private static final boolean STRICT = true;
     private static final int CREATED = 201;
