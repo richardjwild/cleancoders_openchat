@@ -1,4 +1,4 @@
-package org.openchat.dummies;
+package org.openchat.dummy;
 
 import spark.Request;
 import spark.Response;

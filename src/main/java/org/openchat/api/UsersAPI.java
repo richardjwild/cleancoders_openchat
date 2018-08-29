@@ -3,6 +3,9 @@ package org.openchat.api;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
+import org.openchat.domain.Post;
+import org.openchat.environment.Clock;
+import org.openchat.environment.PostIdGenerator;
 import spark.Request;
 import spark.Response;
 
@@ -47,12 +50,11 @@ public class UsersAPI {
     }
 
     private JsonObject jsonPost(Post post) {
-        JsonObject json = new JsonObject();
-        json.add("text", post.text());
-        json.add("dateTime", format(post.dateTime()));
-        json.add("userId", post.userId());
-        json.add("postId", post.postId());
-        return json;
+        return new JsonObject()
+                .add("text", post.text())
+                .add("dateTime", format(post.dateTime()))
+                .add("userId", post.userId())
+                .add("postId", post.postId());
     }
 
     private String format(LocalDateTime now) {

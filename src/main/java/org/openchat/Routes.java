@@ -1,13 +1,11 @@
 package org.openchat;
 
-import org.openchat.api.Clock;
-import org.openchat.api.PostIdGenerator;
 import org.openchat.api.UsersAPI;
-import org.openchat.dummies.DummyLoginAPI;
+import org.openchat.dummy.DummyLoginAPI;
+import org.openchat.environment.Clock;
+import org.openchat.environment.PostIdGenerator;
 
-import static spark.Spark.get;
-import static spark.Spark.options;
-import static spark.Spark.post;
+import static spark.Spark.*;
 
 public class Routes {
 

@@ -6,16 +6,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.openchat.environment.Clock;
+import org.openchat.environment.PostIdGenerator;
 import org.skyscreamer.jsonassert.JSONAssert;
 import spark.Request;
 import spark.Response;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
