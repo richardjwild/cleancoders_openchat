@@ -24,13 +24,14 @@ import static org.mockito.Mockito.verify;
 public class Users_API_should {
 
     private static final boolean STRICT = true;
+    private static final int CREATED = 201;
+    private static final int OK = 200;
+
     private static final String POST_TEXT_1 = "first post!";
     private static final String POST_TEXT_2 = "here is some more";
     private static final String USER_ID = randomUUID().toString();
     private static final String POST_ID_1 = randomUUID().toString();
     private static final String POST_ID_2 = randomUUID().toString();
-    public static final int CREATED = 201;
-    public static final int OK = 200;
 
     @Mock
     private Clock clock;
@@ -99,7 +100,7 @@ public class Users_API_should {
         String actual = usersAPI.retrievePosts(request, response);
 
         String timestamp1 = "2018-08-31T12:01:16Z";
-        String timestamp2 = "2018-09-02T11:59:59Z";
+        String timestamp2 = "2018-09-02T23:59:59Z";
         String expected = "[" +
                 postAsJson(POST_ID_1, USER_ID, timestamp1, POST_TEXT_1) + "," +
                 postAsJson(POST_ID_2, USER_ID, timestamp2, POST_TEXT_2) +

@@ -20,7 +20,7 @@ import static org.eclipse.jetty.http.HttpStatus.OK_200;
 public class UsersAPI {
 
     private static final DateTimeFormatter DATETIME_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss'Z'");
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     private Clock clock;
     private PostIdGenerator postIdGenerator;
