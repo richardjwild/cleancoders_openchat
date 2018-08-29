@@ -60,6 +60,7 @@ public class Users_API_should {
         String timestamp = "2018-08-29T08:16:23Z";
         String expected = postAsJson(POST_ID, USER_ID, timestamp, POST_TEXT);
         assertJson(actual, expected);
+        verify(response).type("application/json");
         verify(response).status(201);
     }
 

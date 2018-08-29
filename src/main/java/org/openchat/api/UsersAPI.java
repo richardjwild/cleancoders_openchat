@@ -12,6 +12,9 @@ import spark.Response;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static org.eclipse.jetty.http.HttpStatus.CREATED_201;
+import static org.eclipse.jetty.http.HttpStatus.OK_200;
+
 public class UsersAPI {
 
     private static final DateTimeFormatter DATETIME_FORMATTER =
@@ -32,8 +35,8 @@ public class UsersAPI {
         if (post != null) {
             json.add(jsonPost(post));
         }
-        response.type("application/json");
-        response.status(200);
+        response.type(ContentType.APPLICATION_JSON);
+        response.status(OK_200);
         return json.toString();
     }
 
@@ -44,8 +47,8 @@ public class UsersAPI {
                 jsonBody.getString("text", null),
                 clock.now(),
                 postIdGenerator.nextId());
-        response.status(201);
-        response.type("text/plain");
+        response.status(CREATED_201);
+        response.type(ContentType.APPLICATION_JSON);
         return jsonPost(post).toString();
     }
 
