@@ -30,20 +30,12 @@ public class UsersAPI {
     public String retrievePosts(Request request, Response response) {
         JsonArray json = new JsonArray();
         if (text != null) {
-            JsonObject post = new JsonObject();
-            post.add("text", text);
-            post.add("dateTime", format(dateTime));
-            post.add("userId", userId);
-            post.add("postId", postId);
+            JsonObject post = jsonPost(postId, userId, dateTime, text);
             json.add(post);
         }
         response.type("application/json");
         response.status(200);
         return json.toString();
-    }
-
-    private String format(LocalDateTime now) {
-        return now.format(DATETIME_FORMATTER);
     }
 
     public String createPost(Request request, Response response) {
@@ -54,11 +46,20 @@ public class UsersAPI {
         this.postId = postIdGenerator.nextId();
         response.status(201);
         response.type("text/plain");
+        JsonObject post = jsonPost(postId, userId, dateTime, text);
+        return post.toString();
+    }
+
+    private JsonObject jsonPost(String postId, String userId, LocalDateTime dateTime, String text) {
         JsonObject post = new JsonObject();
         post.add("text", text);
         post.add("dateTime", format(dateTime));
         post.add("userId", userId);
         post.add("postId", postId);
-        return post.toString();
+        return post;
+    }
+
+    private String format(LocalDateTime now) {
+        return now.format(DATETIME_FORMATTER);
     }
 }
