@@ -8,6 +8,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.openchat.domain.PostService;
 import org.openchat.environment.Clock;
 import org.openchat.environment.PostIdGenerator;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -48,7 +49,8 @@ public class UsersAPI_should {
 
     @Before
     public void setup() {
-        usersAPI = new UsersAPI(clock, postIdGenerator);
+        PostService postService = new PostService(clock, postIdGenerator);
+        usersAPI = new UsersAPI(postService);
         inOrder = Mockito.inOrder(response);
     }
 

@@ -1,6 +1,7 @@
 package org.openchat;
 
 import org.openchat.api.UsersAPI;
+import org.openchat.domain.PostService;
 import org.openchat.dummy.DummyLoginAPI;
 import org.openchat.environment.Clock;
 import org.openchat.environment.PostIdGenerator;
@@ -19,7 +20,8 @@ public class Routes {
     }
 
     private void createAPIs() {
-        usersAPI = new UsersAPI(new Clock(), new PostIdGenerator());
+        PostService postService = new PostService(new Clock(), new PostIdGenerator());
+        usersAPI = new UsersAPI(postService);
         dummyLoginAPI = new DummyLoginAPI();
     }
 
