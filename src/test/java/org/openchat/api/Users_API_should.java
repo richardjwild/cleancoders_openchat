@@ -11,6 +11,7 @@ import spark.Request;
 import spark.Response;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
 import static org.mockito.BDDMockito.given;
@@ -68,6 +69,7 @@ public class Users_API_should {
         createPost(POST_ID, USER_ID, POST_TEXT);
 
         givenTimeIs(2018, 8, 30, 14, 25, 47);
+        givenNextPostIdIs(randomUUID().toString());
         String actual = usersAPI.retrievePosts(request, response);
 
         String timestamp = "2018-08-29T08:16:23Z";
