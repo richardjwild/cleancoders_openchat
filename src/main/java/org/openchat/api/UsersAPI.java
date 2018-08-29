@@ -1,7 +1,10 @@
 package org.openchat.api;
 
+import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
+import spark.Request;
+import spark.Response;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,7 +24,7 @@ public class UsersAPI {
         this.postIdGenerator = postIdGenerator;
     }
 
-    public String retrievePosts() {
+    public String retrievePosts(Request request, Response response) {
         JsonArray json = new JsonArray();
         if (text != null) {
             JsonObject post = new JsonObject();
@@ -31,6 +34,8 @@ public class UsersAPI {
             post.add("postId", postIdGenerator.nextId());
             json.add(post);
         }
+        response.type("application/json");
+        response.status(200);
         return json.toString();
     }
 
@@ -38,8 +43,10 @@ public class UsersAPI {
         return now.format(DATETIME_FORMATTER);
     }
 
-    public void createPost(String userId, String text) {
-        this.userId = userId;
-        this.text = text;
+    public void createPost(Request request, Response response) {
+        this.userId = request.params("id");
+        JsonObject json = Json.parse(request.body()).asObject();
+        this.text = json.getString("text", null);
+        response.status(201);
     }
 }
