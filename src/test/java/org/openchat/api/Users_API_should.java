@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
 import spark.Request;
@@ -16,23 +15,22 @@ import java.time.LocalDateTime;
 import static java.util.UUID.randomUUID;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class Users_API_should {
 
     private static final boolean STRICT = true;
+    private static final String POST_TEXT = "first post!";
+    private static final String USER_ID = randomUUID().toString();
+    private static final String POST_ID = randomUUID().toString();
 
     @Mock
     private Clock clock;
-
     @Mock
     private PostIdGenerator postIdGenerator;
-
     @Mock
     private Request request;
-
     @Mock
     private Response response;
 
@@ -54,31 +52,37 @@ public class Users_API_should {
     }
 
     @Test
-    public void return_the_message_given_one_has_been_posted() throws JSONException {
-        String text = "first post!";
-        String postId = randomUUID().toString();
-        String userId = randomUUID().toString();
-
-        givenTimeIs(2018, 8, 29, 8, 16, 23);
-        givenNextPostIdIs(postId);
-        givenPathParameters(
-                "id", userId);
-        givenRequestBody(
-                "{\"text\":\"" + text + "\"}");
-        usersAPI.createPost(request, response);
-
-        String actual = usersAPI.retrievePosts(request, response);
+    public void echo_back_the_created_post() throws JSONException {
+        String actual = createPost(POST_ID, USER_ID, POST_TEXT);
 
         String timestamp = "2018-08-29T08:16:23Z";
-        String expected = "[" + postAsJson(postId, userId, timestamp, text) + "]";
+        String expected = postAsJson(POST_ID, USER_ID, timestamp, POST_TEXT);
         assertJson(actual, expected);
         verify(response).status(201);
     }
 
-    private void givenPathParameters(String... pathParameters) {
-        for (int paramNo = 0; paramNo < pathParameters.length; paramNo += 2)
-            given(request.params(pathParameters[paramNo]))
-                    .willReturn(pathParameters[paramNo + 1]);
+    @Test
+    public void retrieve_the_message_given_one_has_been_posted() throws JSONException {
+        createPost(POST_ID, USER_ID, POST_TEXT);
+
+        String actual = usersAPI.retrievePosts(request, response);
+
+        String timestamp = "2018-08-29T08:16:23Z";
+        String expected = "[" + postAsJson(POST_ID, USER_ID, timestamp, POST_TEXT) + "]";
+        assertJson(actual, expected);
+        verify(response).status(201);
+    }
+
+    private String createPost(String postId, String userId, String text) {
+        givenTimeIs(2018, 8, 29, 8, 16, 23);
+        givenNextPostIdIs(postId);
+        givenPathParameter("userId", userId);
+        givenRequestBody("{\"text\":\"" + text + "\"}");
+        return usersAPI.createPost(request, response);
+    }
+
+    private void givenPathParameter(String name, String value) {
+        given(request.params(name)).willReturn(value);
     }
 
     private void givenRequestBody(String body) {

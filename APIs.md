@@ -69,7 +69,7 @@ Response: "User does not exit."
 
 ## Retrieve Posts (User timeline)
 
-GET - openchat/user/<id>/timeline
+GET - openchat/users/<id>/timeline
 [{
 	"postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
 	"userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",

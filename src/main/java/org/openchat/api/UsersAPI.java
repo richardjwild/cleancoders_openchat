@@ -43,10 +43,17 @@ public class UsersAPI {
         return now.format(DATETIME_FORMATTER);
     }
 
-    public void createPost(Request request, Response response) {
-        this.userId = request.params("id");
+    public String createPost(Request request, Response response) {
+        this.userId = request.params("userId");
         JsonObject json = Json.parse(request.body()).asObject();
         this.text = json.getString("text", null);
         response.status(201);
+        response.type("text/plain");
+        JsonObject post = new JsonObject();
+        post.add("text", text);
+        post.add("dateTime", format(clock.now()));
+        post.add("userId", userId);
+        post.add("postId", postIdGenerator.nextId());
+        return post.toString();
     }
 }
