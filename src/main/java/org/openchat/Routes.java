@@ -1,10 +1,13 @@
 package org.openchat;
 
+import org.openchat.api.UserService;
 import org.openchat.api.UsersAPI;
 import org.openchat.domain.PostService;
 import org.openchat.dummy.DummyLoginAPI;
 import org.openchat.environment.Clock;
 import org.openchat.environment.PostIdGenerator;
+import org.openchat.environment.UserIdGenerator;
+import org.openchat.repository.InMemoryRepository;
 
 import static spark.Spark.*;
 
@@ -20,8 +23,10 @@ public class Routes {
     }
 
     private void createAPIs() {
-        PostService postService = new PostService(new Clock(), new PostIdGenerator());
-        usersAPI = new UsersAPI(postService);
+        InMemoryRepository repository = new InMemoryRepository();
+        PostService postService = new PostService(new Clock(), new PostIdGenerator(), repository);
+        UserService userService = new UserService(new UserIdGenerator(), repository);
+        usersAPI = new UsersAPI(postService, userService);
         dummyLoginAPI = new DummyLoginAPI();
     }
 

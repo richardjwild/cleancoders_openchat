@@ -2,6 +2,9 @@ package org.openchat.domain;
 
 import java.time.LocalDateTime;
 
+import static org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals;
+import static org.apache.commons.lang3.builder.HashCodeBuilder.reflectionHashCode;
+
 public class Post {
 
     private final String userId;
@@ -30,5 +33,25 @@ public class Post {
 
     public String postId() {
         return postId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return reflectionEquals(this, o);
+    }
+
+    @Override
+    public int hashCode() {
+        return reflectionHashCode(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "userId='" + userId + '\'' +
+                ", text='" + text + '\'' +
+                ", dateTime=" + dateTime +
+                ", postId='" + postId + '\'' +
+                '}';
     }
 }
