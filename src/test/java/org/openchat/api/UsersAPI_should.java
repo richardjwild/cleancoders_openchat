@@ -99,6 +99,7 @@ public class UsersAPI_should extends RestApiTest {
         String timestamp = "2018-08-29T08:16:23Z";
         String expected = "[" + postAsJson(POST_ID_1, USER_ID, timestamp, POST_TEXT_1) + "]";
         assertJson(actual, expected);
+        verify(response).type("application/json");
         verify(response).status(OK);
     }
 
@@ -119,6 +120,7 @@ public class UsersAPI_should extends RestApiTest {
                 postAsJson(POST_ID_2, USER_ID, timestamp2, POST_TEXT_2) +
                 "]";
         assertJson(actual, expected);
+        verify(response).type("application/json");
         verify(response).status(OK);
     }
 
@@ -133,8 +135,9 @@ public class UsersAPI_should extends RestApiTest {
 
         String actual = usersAPI.registerNewUser(request, response);
 
-        verify(response).status(CREATED);
         verify(userRepository).storeUser(new User(USER_ID, USER_NAME, ABOUT_USER, PASSWORD));
+        verify(response).type("application/json");
+        verify(response).status(CREATED);
         assertJson(actual, "{" +
                 "\"id\":\"" + USER_ID + "\"," +
                 "\"username\":\"" + USER_NAME + "\"," +

@@ -62,6 +62,7 @@ public class UsersAPI {
         String password = body.getString("password", null);
         User user = userService.createUser(username, about, password);
         response.status(CREATED_201);
+        response.type(ContentType.APPLICATION_JSON);
         return new JsonObject()
                 .add("id", user.id())
                 .add("username", user.username())
