@@ -29,6 +29,10 @@ public class User {
         return about;
     }
 
+    public boolean nameMatches(String username) {
+        return this.username.equals(username);
+    }
+
     @Override
     public boolean equals(Object o) {
         return reflectionEquals(this, o);

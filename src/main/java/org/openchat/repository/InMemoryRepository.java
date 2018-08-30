@@ -24,4 +24,9 @@ public class InMemoryRepository implements PostRepository, UserRepository {
     public void storeUser(User user) {
 
     }
+
+    @Override
+    public List<User> retrieveUsers() {
+        return null;
+    }
 }

@@ -4,6 +4,8 @@ import org.openchat.domain.User;
 import org.openchat.environment.UserIdGenerator;
 import org.openchat.repository.UserRepository;
 
+import java.util.Optional;
+
 public class UserService {
 
     private UserIdGenerator userIdGenerator;
@@ -19,5 +21,14 @@ public class UserService {
         User user = new User(userId, username, about, password);
         userRepository.storeUser(user);
         return user;
+    }
+
+    public Optional<User> findUser(String username) {
+        for (User user : userRepository.retrieveUsers()) {
+            if (user.nameMatches(username)) {
+                return Optional.of(user);
+            }
+        }
+        return Optional.empty();
     }
 }
