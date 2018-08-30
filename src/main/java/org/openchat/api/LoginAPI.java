@@ -19,7 +19,8 @@ public class LoginAPI {
     public String login(Request request, Response response) {
         JsonObject body = Json.parse(request.body()).asObject();
         String username = body.getString("username", null);
-        return userService.findUser(username).map(user -> {
+        String password = body.getString("password", null);
+        return userService.findMatchingUser(username, password).map(user -> {
             response.status(OK_200);
             response.type(ContentType.APPLICATION_JSON);
             return new JsonObject()

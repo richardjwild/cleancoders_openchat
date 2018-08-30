@@ -1,9 +1,9 @@
 package org.openchat;
 
+import org.openchat.api.LoginAPI;
 import org.openchat.api.UserService;
 import org.openchat.api.UsersAPI;
 import org.openchat.domain.PostService;
-import org.openchat.dummy.DummyLoginAPI;
 import org.openchat.environment.Clock;
 import org.openchat.environment.PostIdGenerator;
 import org.openchat.environment.UserIdGenerator;
@@ -14,7 +14,7 @@ import static spark.Spark.*;
 public class Routes {
 
     private UsersAPI usersAPI;
-    private DummyLoginAPI dummyLoginAPI;
+    private LoginAPI loginAPI;
 
     public void create() {
         createAPIs();
@@ -27,12 +27,13 @@ public class Routes {
         PostService postService = new PostService(new Clock(), new PostIdGenerator(), repository);
         UserService userService = new UserService(new UserIdGenerator(), repository);
         usersAPI = new UsersAPI(postService, userService);
-        dummyLoginAPI = new DummyLoginAPI();
+        loginAPI = new LoginAPI(userService);
     }
 
     private void openchatRoutes() {
         get("status", (req, res) -> "OpenChat: OK!");
-        post("login", (req, res) -> dummyLoginAPI.login(req, res));
+        post("login", (req, res) -> loginAPI.login(req, res));
+        post("users", (req, res) -> usersAPI.registerNewUser(req, res));
         post("users/:userId/timeline", (req, res) -> usersAPI.createPost(req, res));
         get("users/:userId/timeline", (req, res) -> usersAPI.retrievePosts(req, res));
     }

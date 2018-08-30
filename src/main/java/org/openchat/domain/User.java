@@ -33,6 +33,10 @@ public class User {
         return this.username.equals(username);
     }
 
+    public boolean credentialsMatch(String password) {
+        return this.password.equals(password);
+    }
+
     @Override
     public boolean equals(Object o) {
         return reflectionEquals(this, o);

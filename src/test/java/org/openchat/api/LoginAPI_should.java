@@ -53,7 +53,8 @@ public class LoginAPI_should extends RestApiTest {
         given(userRepository.retrieveUsers()).willReturn(singletonList(
                 new User(USER_ID, USER_NAME, ABOUT, PASSWORD)));
         givenRequestBody("{" +
-                "\"username\":\"" + USER_NAME + "\"" +
+                "\"username\":\"" + USER_NAME + "\"," +
+                "\"password\":\"" + PASSWORD + "\"" +
                 "}");
 
         String actual = loginAPI.login(request, response);
@@ -65,6 +66,21 @@ public class LoginAPI_should extends RestApiTest {
                 "\"id\":\"" + USER_ID + "\"," +
                 "\"about\":\"" + ABOUT + "\"" +
                 "}");
+    }
+
+    @Test
+    public void reject_incorrect_login_by_registered_user() {
+        given(userRepository.retrieveUsers()).willReturn(singletonList(
+                new User(USER_ID, USER_NAME, ABOUT, PASSWORD)));
+        givenRequestBody("{" +
+                "\"username\":\"" + USER_NAME + "\"," +
+                "\"password\":\"incorrect password\"" +
+                "}");
+
+        String actual = loginAPI.login(request, response);
+
+        verify(response).status(404);
+        assertThat(actual).isEqualTo("Invalid credentials.");
     }
 
 }

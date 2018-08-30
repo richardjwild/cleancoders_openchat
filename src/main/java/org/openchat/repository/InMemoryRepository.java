@@ -9,6 +9,7 @@ import java.util.List;
 public class InMemoryRepository implements PostRepository, UserRepository {
 
     private List<Post> posts = new ArrayList<>();
+    private List<User> users = new ArrayList<>();
 
     @Override
     public void storePost(Post post) {
@@ -22,11 +23,11 @@ public class InMemoryRepository implements PostRepository, UserRepository {
 
     @Override
     public void storeUser(User user) {
-
+        users.add(user);
     }
 
     @Override
     public List<User> retrieveUsers() {
-        return null;
+        return users;
     }
 }

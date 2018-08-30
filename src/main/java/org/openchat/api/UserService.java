@@ -23,9 +23,9 @@ public class UserService {
         return user;
     }
 
-    public Optional<User> findUser(String username) {
+    public Optional<User> findMatchingUser(String username, String password) {
         for (User user : userRepository.retrieveUsers()) {
-            if (user.nameMatches(username)) {
+            if (user.nameMatches(username) && user.credentialsMatch(password)) {
                 return Optional.of(user);
             }
         }
