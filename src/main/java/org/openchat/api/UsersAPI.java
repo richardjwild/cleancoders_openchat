@@ -11,6 +11,7 @@ import spark.Response;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.function.BinaryOperator;
 
 import static org.eclipse.jetty.http.HttpStatus.CREATED_201;
 import static org.eclipse.jetty.http.HttpStatus.OK_200;
@@ -18,6 +19,9 @@ import static org.eclipse.jetty.http.HttpStatus.OK_200;
 public class UsersAPI {
 
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private static final BinaryOperator<JsonArray> UNUSED_COMBINER = (a, b) -> {
+        throw new UnsupportedOperationException("To use a parallel stream this combiner must be implemented");
+    };
 
     private final PostService postService;
     private final UserService userService;
@@ -29,13 +33,12 @@ public class UsersAPI {
 
     public String retrievePosts(Request request, Response response) {
         String userId = request.params("userId");
-        JsonArray json = new JsonArray();
-        for (Post post : postService.timelineFor(userId)) {
-            json.add(jsonPost(post));
-        }
         response.type(ContentType.APPLICATION_JSON);
         response.status(OK_200);
-        return json.toString();
+        return postService.timelineFor(userId).stream()
+                .map(this::jsonPost)
+                .reduce(new JsonArray(), JsonArray::add, UNUSED_COMBINER)
+                .toString();
     }
 
     public String createPost(Request request, Response response) {
@@ -62,11 +65,10 @@ public class UsersAPI {
     public String retrieveUsers(Request unused, Response response) {
         response.status(OK_200);
         response.type(ContentType.APPLICATION_JSON);
-        JsonArray json = new JsonArray();
-        userService.allUsers().stream()
+        return userService.allUsers().stream()
                 .map(this::jsonUser)
-                .forEach(json::add);
-        return json.toString();
+                .reduce(new JsonArray(), JsonArray::add, UNUSED_COMBINER)
+                .toString();
     }
 
     private JsonObject jsonPost(Post post) {
