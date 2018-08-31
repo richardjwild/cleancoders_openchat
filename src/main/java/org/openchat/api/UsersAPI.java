@@ -16,12 +16,7 @@ import java.util.function.BinaryOperator;
 import static org.eclipse.jetty.http.HttpStatus.CREATED_201;
 import static org.eclipse.jetty.http.HttpStatus.OK_200;
 
-public class UsersAPI {
-
-    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    private static final BinaryOperator<JsonArray> UNUSED_COMBINER = (a, b) -> {
-        throw new UnsupportedOperationException("To use a parallel stream this combiner must be implemented");
-    };
+public class UsersAPI extends OpenChatAPI {
 
     private final PostService postService;
     private final UserService userService;
@@ -69,20 +64,5 @@ public class UsersAPI {
                 .map(this::jsonUser)
                 .reduce(new JsonArray(), JsonArray::add, UNUSED_COMBINER)
                 .toString();
-    }
-
-    private JsonObject jsonPost(Post post) {
-        return new JsonObject()
-                .add("text", post.text())
-                .add("dateTime", post.dateTime().format(DATETIME_FORMATTER))
-                .add("userId", post.userId())
-                .add("postId", post.postId());
-    }
-
-    private JsonObject jsonUser(User user) {
-        return new JsonObject()
-                .add("id", user.id())
-                .add("username", user.username())
-                .add("about", user.about());
     }
 }

@@ -5,6 +5,7 @@ import org.openchat.domain.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class InMemoryRepository implements PostRepository, UserRepository {
 

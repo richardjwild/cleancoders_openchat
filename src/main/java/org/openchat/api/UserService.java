@@ -36,4 +36,10 @@ public class UserService {
     public List<User> allUsers() {
         return userRepository.retrieveUsers();
     }
+
+    public Optional<User> findUser(String followerId) {
+        return userRepository.retrieveUsers().stream()
+                .filter(user -> user.is(followerId))
+                .findFirst();
+    }
 }
