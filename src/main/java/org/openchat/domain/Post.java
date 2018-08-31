@@ -54,4 +54,8 @@ public class Post {
                 ", postId='" + postId + '\'' +
                 '}';
     }
+
+    public boolean isByUser(String userId) {
+        return this.userId.equals(userId);
+    }
 }

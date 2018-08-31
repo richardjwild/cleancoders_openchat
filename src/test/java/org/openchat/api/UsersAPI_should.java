@@ -30,7 +30,8 @@ public class UsersAPI_should extends RestApiTest {
 
     private static final String POST_TEXT_1 = "first post!";
     private static final String POST_TEXT_2 = "here is some more";
-    private static final String USER_ID = randomUUID().toString();
+    private static final String USER_ID_1 = randomUUID().toString();
+    private static final String USER_ID_2 = randomUUID().toString();
     private static final String POST_ID_1 = randomUUID().toString();
     private static final String POST_ID_2 = randomUUID().toString();
     private static final String USER_NAME = "a user name";
@@ -61,6 +62,7 @@ public class UsersAPI_should extends RestApiTest {
     @Test
     public void return_empty_list_of_posts_given_none_posted() throws JSONException {
         given(postRepository.retrievePosts()).willReturn(emptyList());
+        givenPathParameter("userId", USER_ID_1);
 
         String actual = usersAPI.retrievePosts(request, response);
 
@@ -75,16 +77,16 @@ public class UsersAPI_should extends RestApiTest {
         LocalDateTime dateTime = LocalDateTime.of(2018, 8, 29, 8, 16, 23);
         givenTimeIs(dateTime);
         givenNextPostIdIs(POST_ID_1);
-        givenPathParameter("userId", USER_ID);
+        givenPathParameter("userId", USER_ID_1);
         givenRequestBody("{\"text\":\"" + POST_TEXT_1 + "\"}");
 
         String actual = usersAPI.createPost(request, response);
 
-        verify(postRepository).storePost(new Post(USER_ID, POST_TEXT_1, dateTime, POST_ID_1));
+        verify(postRepository).storePost(new Post(USER_ID_1, POST_TEXT_1, dateTime, POST_ID_1));
         verify(response).type("application/json");
         verify(response).status(CREATED);
         String timestamp = "2018-08-29T08:16:23Z";
-        String expected = postAsJson(POST_ID_1, USER_ID, timestamp, POST_TEXT_1);
+        String expected = postAsJson(POST_ID_1, USER_ID_1, timestamp, POST_TEXT_1);
         assertJson(actual, expected);
     }
 
@@ -92,12 +94,13 @@ public class UsersAPI_should extends RestApiTest {
     public void retrieve_the_post_given_one_has_been_posted() throws JSONException {
         LocalDateTime dateTime = LocalDateTime.of(2018, 8, 29, 8, 16, 23);
         given(postRepository.retrievePosts()).willReturn(
-                singletonList(new Post(USER_ID, POST_TEXT_1, dateTime, POST_ID_1)));
+                singletonList(new Post(USER_ID_1, POST_TEXT_1, dateTime, POST_ID_1)));
+        givenPathParameter("userId", USER_ID_1);
 
         String actual = usersAPI.retrievePosts(request, response);
 
         String timestamp = "2018-08-29T08:16:23Z";
-        String expected = "[" + postAsJson(POST_ID_1, USER_ID, timestamp, POST_TEXT_1) + "]";
+        String expected = "[" + postAsJson(POST_ID_1, USER_ID_1, timestamp, POST_TEXT_1) + "]";
         assertJson(actual, expected);
         verify(response).type("application/json");
         verify(response).status(OK);
@@ -108,16 +111,17 @@ public class UsersAPI_should extends RestApiTest {
         LocalDateTime dateTime1 = LocalDateTime.of(2018, 8, 31, 12, 1, 16);
         LocalDateTime dateTime2 = LocalDateTime.of(2018, 9, 2, 23, 59, 59);
         given(postRepository.retrievePosts()).willReturn(asList(
-                new Post(USER_ID, POST_TEXT_1, dateTime1, POST_ID_1),
-                new Post(USER_ID, POST_TEXT_2, dateTime2, POST_ID_2)));
+                new Post(USER_ID_1, POST_TEXT_1, dateTime1, POST_ID_1),
+                new Post(USER_ID_1, POST_TEXT_2, dateTime2, POST_ID_2)));
+        givenPathParameter("userId", USER_ID_1);
 
         String actual = usersAPI.retrievePosts(request, response);
 
         String timestamp1 = "2018-08-31T12:01:16Z";
         String timestamp2 = "2018-09-02T23:59:59Z";
         String expected = "[" +
-                postAsJson(POST_ID_1, USER_ID, timestamp1, POST_TEXT_1) + "," +
-                postAsJson(POST_ID_2, USER_ID, timestamp2, POST_TEXT_2) +
+                postAsJson(POST_ID_1, USER_ID_1, timestamp1, POST_TEXT_1) + "," +
+                postAsJson(POST_ID_2, USER_ID_1, timestamp2, POST_TEXT_2) +
                 "]";
         assertJson(actual, expected);
         verify(response).type("application/json");
@@ -125,8 +129,26 @@ public class UsersAPI_should extends RestApiTest {
     }
 
     @Test
+    public void retrieve_a_specific_users_post() throws JSONException {
+        LocalDateTime dateTime1 = LocalDateTime.of(2018, 8, 31, 12, 1, 16);
+        LocalDateTime dateTime2 = LocalDateTime.of(2018, 9, 2, 23, 59, 59);
+        given(postRepository.retrievePosts()).willReturn(asList(
+                new Post(USER_ID_1, POST_TEXT_1, dateTime1, POST_ID_1),
+                new Post(USER_ID_2, POST_TEXT_2, dateTime2, POST_ID_2)));
+        givenPathParameter("userId", USER_ID_1);
+
+        String actual = usersAPI.retrievePosts(request, response);
+
+        String timestamp = "2018-08-31T12:01:16Z";
+        String expected = "[" + postAsJson(POST_ID_1, USER_ID_1, timestamp, POST_TEXT_1) + "]";
+        assertJson(actual, expected);
+        verify(response).type("application/json");
+        verify(response).status(OK);
+    }
+
+    @Test
     public void register_a_user() throws JSONException {
-        givenNextUserIdIs(USER_ID);
+        givenNextUserIdIs(USER_ID_1);
         givenRequestBody("{" +
                 "\"username\":\"" + USER_NAME + "\"," +
                 "\"about\":\"" + ABOUT_USER + "\"," +
@@ -135,11 +157,11 @@ public class UsersAPI_should extends RestApiTest {
 
         String actual = usersAPI.registerNewUser(request, response);
 
-        verify(userRepository).storeUser(new User(USER_ID, USER_NAME, ABOUT_USER, PASSWORD));
+        verify(userRepository).storeUser(new User(USER_ID_1, USER_NAME, ABOUT_USER, PASSWORD));
         verify(response).type("application/json");
         verify(response).status(CREATED);
         assertJson(actual, "{" +
-                "\"id\":\"" + USER_ID + "\"," +
+                "\"id\":\"" + USER_ID_1 + "\"," +
                 "\"username\":\"" + USER_NAME + "\"," +
                 "\"about\":\"" + ABOUT_USER + "\"" +
                 "}");

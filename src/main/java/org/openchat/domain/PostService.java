@@ -6,6 +6,7 @@ import org.openchat.repository.PostRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PostService {
 
@@ -19,8 +20,10 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    public List<Post> retrievePosts() {
-        return postRepository.retrievePosts();
+    public List<Post> timelineFor(String userId) {
+        return postRepository.retrievePosts().stream()
+                .filter(post -> post.isByUser(userId))
+                .collect(Collectors.toList());
     }
 
     public Post createPost(String userId, String text) {

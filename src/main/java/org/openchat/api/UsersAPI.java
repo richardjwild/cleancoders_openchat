@@ -6,7 +6,6 @@ import com.eclipsesource.json.JsonObject;
 import org.openchat.domain.Post;
 import org.openchat.domain.PostService;
 import org.openchat.domain.User;
-import org.openchat.environment.UserIdGenerator;
 import spark.Request;
 import spark.Response;
 
@@ -28,8 +27,9 @@ public class UsersAPI {
     }
 
     public String retrievePosts(Request request, Response response) {
+        String userId = request.params("userId");
         JsonArray json = new JsonArray();
-        for (Post post : postService.retrievePosts()) {
+        for (Post post : postService.timelineFor(userId)) {
             json.add(jsonPost(post));
         }
         response.type(ContentType.APPLICATION_JSON);
