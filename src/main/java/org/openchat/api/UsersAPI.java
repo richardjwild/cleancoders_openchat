@@ -10,6 +10,7 @@ import spark.Request;
 import spark.Response;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import static org.eclipse.jetty.http.HttpStatus.CREATED_201;
 import static org.eclipse.jetty.http.HttpStatus.OK_200;
@@ -47,14 +48,6 @@ public class UsersAPI {
         return jsonPost(post).toString();
     }
 
-    private JsonObject jsonPost(Post post) {
-        return new JsonObject()
-                .add("text", post.text())
-                .add("dateTime", post.dateTime().format(DATETIME_FORMATTER))
-                .add("userId", post.userId())
-                .add("postId", post.postId());
-    }
-
     public String registerNewUser(Request request, Response response) {
         JsonObject body = Json.parse(request.body()).asObject();
         String username = body.getString("username", null);
@@ -63,10 +56,31 @@ public class UsersAPI {
         User user = userService.createUser(username, about, password);
         response.status(CREATED_201);
         response.type(ContentType.APPLICATION_JSON);
+        return jsonUser(user).toString();
+    }
+
+    public String retrieveUsers(Request unused, Response response) {
+        response.status(OK_200);
+        response.type(ContentType.APPLICATION_JSON);
+        JsonArray json = new JsonArray();
+        userService.allUsers().stream()
+                .map(this::jsonUser)
+                .forEach(json::add);
+        return json.toString();
+    }
+
+    private JsonObject jsonPost(Post post) {
+        return new JsonObject()
+                .add("text", post.text())
+                .add("dateTime", post.dateTime().format(DATETIME_FORMATTER))
+                .add("userId", post.userId())
+                .add("postId", post.postId());
+    }
+
+    private JsonObject jsonUser(User user) {
         return new JsonObject()
                 .add("id", user.id())
                 .add("username", user.username())
-                .add("about", user.about())
-                .toString();
+                .add("about", user.about());
     }
 }

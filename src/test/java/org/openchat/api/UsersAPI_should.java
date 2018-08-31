@@ -34,9 +34,12 @@ public class UsersAPI_should extends RestApiTest {
     private static final String USER_ID_2 = randomUUID().toString();
     private static final String POST_ID_1 = randomUUID().toString();
     private static final String POST_ID_2 = randomUUID().toString();
-    private static final String USER_NAME = "a user name";
-    private static final String ABOUT_USER = "something about the user";
-    private static final String PASSWORD = "a password";
+    private static final String USER_NAME_1 = "a user name";
+    private static final String USER_NAME_2 = "another user name";
+    private static final String ABOUT_USER_1 = "something about the user";
+    private static final String ABOUT_USER_2 = "something about the other user";
+    private static final String PASSWORD_1 = "a password";
+    private static final String PASSWORD_2 = "another password";
 
     @Mock
     private Clock clock;
@@ -150,21 +153,45 @@ public class UsersAPI_should extends RestApiTest {
     public void register_a_user() throws JSONException {
         givenNextUserIdIs(USER_ID_1);
         givenRequestBody("{" +
-                "\"username\":\"" + USER_NAME + "\"," +
-                "\"about\":\"" + ABOUT_USER + "\"," +
-                "\"password\":\"" + PASSWORD + "\"" +
+                "\"username\":\"" + USER_NAME_1 + "\"," +
+                "\"about\":\"" + ABOUT_USER_1 + "\"," +
+                "\"password\":\"" + PASSWORD_1 + "\"" +
                 "}");
 
         String actual = usersAPI.registerNewUser(request, response);
 
-        verify(userRepository).storeUser(new User(USER_ID_1, USER_NAME, ABOUT_USER, PASSWORD));
+        verify(userRepository).storeUser(new User(USER_ID_1, USER_NAME_1, ABOUT_USER_1, PASSWORD_1));
         verify(response).type("application/json");
         verify(response).status(CREATED);
         assertJson(actual, "{" +
                 "\"id\":\"" + USER_ID_1 + "\"," +
-                "\"username\":\"" + USER_NAME + "\"," +
-                "\"about\":\"" + ABOUT_USER + "\"" +
+                "\"username\":\"" + USER_NAME_1 + "\"," +
+                "\"about\":\"" + ABOUT_USER_1 + "\"" +
                 "}");
+    }
+
+    @Test
+    public void return_all_registered_users() throws JSONException {
+        given(userRepository.retrieveUsers()).willReturn(asList(
+                new User(USER_ID_1, USER_NAME_1, ABOUT_USER_1, PASSWORD_1),
+                new User(USER_ID_2, USER_NAME_2, ABOUT_USER_2, PASSWORD_2)));
+
+        String actual = usersAPI.retrieveUsers(request, response);
+
+        verify(response).type("application/json");
+        verify(response).status(OK);
+        assertJson(actual, "[" +
+                "{" +
+                "\"id\":\"" + USER_ID_1 + "\"," +
+                "\"username\":\"" + USER_NAME_1 + "\"," +
+                "\"about\":\"" + ABOUT_USER_1 + "\"" +
+                "}," +
+                "{" +
+                "\"id\":\"" + USER_ID_2 + "\"," +
+                "\"username\":\"" + USER_NAME_2 + "\"," +
+                "\"about\":\"" + ABOUT_USER_2 + "\"" +
+                "}" +
+                "]");
     }
 
     private String postAsJson(String postId, String userId, String timestamp, String text) {

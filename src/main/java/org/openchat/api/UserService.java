@@ -4,6 +4,7 @@ import org.openchat.domain.User;
 import org.openchat.environment.UserIdGenerator;
 import org.openchat.repository.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public class UserService {
@@ -30,5 +31,9 @@ public class UserService {
             }
         }
         return Optional.empty();
+    }
+
+    public List<User> allUsers() {
+        return userRepository.retrieveUsers();
     }
 }

@@ -33,6 +33,7 @@ public class Routes {
     private void openchatRoutes() {
         get("status", (req, res) -> "OpenChat: OK!");
         post("login", (req, res) -> loginAPI.login(req, res));
+        get("users", (req, res) -> usersAPI.retrieveUsers(req, res));
         post("users", (req, res) -> usersAPI.registerNewUser(req, res));
         post("users/:userId/timeline", (req, res) -> usersAPI.createPost(req, res));
         get("users/:userId/timeline", (req, res) -> usersAPI.retrievePosts(req, res));
