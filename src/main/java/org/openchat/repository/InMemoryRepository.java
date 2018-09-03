@@ -3,42 +3,40 @@ package org.openchat.repository;
 import org.openchat.domain.Post;
 import org.openchat.domain.User;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class InMemoryRepository implements PostRepository, UserRepository {
 
-    private List<Post> posts = new ArrayList<>();
-    private List<User> users = new ArrayList<>();
+    private Map<String, Post> posts = new HashMap<>();
+    private Map<String, User> users = new HashMap<>();
 
     @Override
     public void storePost(Post post) {
-        posts.add(post);
+        posts.put(post.postId(), post);
     }
 
     @Override
     public List<Post> retrievePosts() {
-        return posts;
+        return entriesFrom(posts);
     }
 
     @Override
     public void storeUser(User user) {
-        users.add(user);
+        users.put(user.id(), user);
     }
 
     @Override
     public void updateUser(User userToUpdate) {
-        for (User user : users) {
-            if (user.is(userToUpdate.id())) {
-                users.remove(user);
-                users.add(userToUpdate);
-            }
-        }
+        storeUser(userToUpdate);
     }
 
     @Override
     public List<User> retrieveUsers() {
-        return users;
+        return entriesFrom(users);
+    }
+
+    private <T> List<T> entriesFrom(Map<String, T> map) {
+        return map.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toList());
     }
 }

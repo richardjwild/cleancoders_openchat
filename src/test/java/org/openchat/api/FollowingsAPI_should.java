@@ -64,7 +64,7 @@ public class FollowingsAPI_should extends RestApiTest {
         User following2 = new User(FOLLOWING_USER_2_ID, FOLLOWING_USER_2_NAME, ABOUT_USER_2_FOLLOWING, FOLLOWING_USER_2_PASSWORD);
         follower.follow(following1);
         follower.follow(following2);
-        given(userRepository.retrieveUsers()).willReturn(singletonList(follower));
+        given(userRepository.retrieveUsers()).willReturn(asList(follower, following1, following2));
         givenPathParameter("followerId", FOLLOWER_ID);
 
         String actual = followingsAPI.usersFollowing(request, response);
