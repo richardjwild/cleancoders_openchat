@@ -40,6 +40,7 @@ public class Routes {
         post("users", (req, res) -> usersAPI.registerNewUser(req, res));
         post("users/:userId/timeline", (req, res) -> usersAPI.createPost(req, res));
         get("users/:userId/timeline", (req, res) -> usersAPI.retrievePosts(req, res));
+        get("users/:userId/wall", (req, res) -> usersAPI.wall(req, res));
         get("followings/:followerId/followees", (req, res) -> followingsAPI.usersFollowing(req, res));
         post("followings", (req, res) -> followingsAPI.createFollowingRelationship(req, res));
     }

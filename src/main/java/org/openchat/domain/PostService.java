@@ -5,8 +5,11 @@ import org.openchat.environment.PostIdGenerator;
 import org.openchat.repository.PostRepository;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.Comparator.comparing;
 
 public class PostService {
 
@@ -23,6 +26,7 @@ public class PostService {
     public List<Post> timelineFor(String userId) {
         return postRepository.retrievePosts().stream()
                 .filter(post -> post.isByUser(userId))
+                .sorted(comparing(Post::dateTime).reversed())
                 .collect(Collectors.toList());
     }
 

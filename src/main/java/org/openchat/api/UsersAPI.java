@@ -9,10 +9,11 @@ import org.openchat.domain.User;
 import spark.Request;
 import spark.Response;
 
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.function.BinaryOperator;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
+import static java.util.Comparator.comparing;
 import static org.eclipse.jetty.http.HttpStatus.CREATED_201;
 import static org.eclipse.jetty.http.HttpStatus.OK_200;
 
@@ -64,5 +65,25 @@ public class UsersAPI extends OpenChatAPI {
                 .map(this::jsonUser)
                 .reduce(new JsonArray(), JsonArray::add, UNUSED_COMBINER)
                 .toString();
+    }
+
+    public String wall(Request request, Response response) {
+        String userId = request.params("userId");
+        JsonArray json = new JsonArray();
+        userService.findUser(userId).ifPresent(follower ->
+                followerPlusTheirFollowees(follower)
+                        .map(User::id)
+                        .map(postService::timelineFor)
+                        .flatMap(Collection::stream)
+                        .sorted(comparing(Post::dateTime).reversed())
+                        .map(this::jsonPost)
+                        .forEach(json::add));
+        response.status(OK_200);
+        response.type(ContentType.APPLICATION_JSON);
+        return json.toString();
+    }
+
+    private Stream<User> followerPlusTheirFollowees(User follower) {
+        return Stream.concat(Stream.of(follower), follower.usersFollowing().stream());
     }
 }

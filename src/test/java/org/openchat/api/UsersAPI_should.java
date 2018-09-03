@@ -111,20 +111,20 @@ public class UsersAPI_should extends RestApiTest {
 
     @Test
     public void retrieve_all_posts_given_multiple_have_been_posted() throws JSONException {
-        LocalDateTime dateTime1 = LocalDateTime.of(2018, 8, 31, 12, 1, 16);
-        LocalDateTime dateTime2 = LocalDateTime.of(2018, 9, 2, 23, 59, 59);
+        LocalDateTime earlier = LocalDateTime.of(2018, 8, 31, 12, 1, 16);
+        LocalDateTime later = LocalDateTime.of(2018, 9, 2, 23, 59, 59);
         given(postRepository.retrievePosts()).willReturn(asList(
-                new Post(USER_ID_1, POST_TEXT_1, dateTime1, POST_ID_1),
-                new Post(USER_ID_1, POST_TEXT_2, dateTime2, POST_ID_2)));
+                new Post(USER_ID_1, POST_TEXT_2, later, POST_ID_2),
+                new Post(USER_ID_1, POST_TEXT_1, earlier, POST_ID_1)));
         givenPathParameter("userId", USER_ID_1);
 
         String actual = usersAPI.retrievePosts(request, response);
 
-        String timestamp1 = "2018-08-31T12:01:16Z";
-        String timestamp2 = "2018-09-02T23:59:59Z";
+        String earlierTimestamp = "2018-08-31T12:01:16Z";
+        String laterTimestamp = "2018-09-02T23:59:59Z";
         String expected = "[" +
-                postAsJson(POST_ID_1, USER_ID_1, timestamp1, POST_TEXT_1) + "," +
-                postAsJson(POST_ID_2, USER_ID_1, timestamp2, POST_TEXT_2) +
+                postAsJson(POST_ID_2, USER_ID_1, laterTimestamp, POST_TEXT_2) + "," +
+                postAsJson(POST_ID_1, USER_ID_1, earlierTimestamp, POST_TEXT_1) +
                 "]";
         assertJson(actual, expected);
         verify(response).type("application/json");
@@ -191,6 +191,31 @@ public class UsersAPI_should extends RestApiTest {
                 "\"username\":\"" + USER_NAME_2 + "\"," +
                 "\"about\":\"" + ABOUT_USER_2 + "\"" +
                 "}" +
+                "]");
+    }
+
+    @Test
+    public void return_a_users_wall() throws JSONException {
+        LocalDateTime earlier = LocalDateTime.of(2018, 8, 31, 12, 1, 16);
+        LocalDateTime later = LocalDateTime.of(2018, 9, 2, 23, 59, 59);
+        User user1 = new User(USER_ID_1, USER_NAME_1, ABOUT_USER_1, PASSWORD_1);
+        User user2 = new User(USER_ID_2, USER_NAME_2, ABOUT_USER_2, PASSWORD_2);
+        user1.follow(user2);
+        given(userRepository.retrieveUsers()).willReturn(asList(user1, user2));
+        given(postRepository.retrievePosts()).willReturn(asList(
+                new Post(USER_ID_1, POST_TEXT_1, earlier, POST_ID_1),
+                new Post(USER_ID_2, POST_TEXT_2, later, POST_ID_2)));
+        givenPathParameter("userId", USER_ID_1);
+
+        String actual = usersAPI.wall(request, response);
+
+        verify(response).status(OK);
+        verify(response).type("application/json");
+        String earlierTimestamp = "2018-08-31T12:01:16Z";
+        String laterTimestamp = "2018-09-02T23:59:59Z";
+        assertJson(actual, "[" +
+                postAsJson(POST_ID_2, USER_ID_2, laterTimestamp, POST_TEXT_2) + "," +
+                postAsJson(POST_ID_1, USER_ID_1, earlierTimestamp, POST_TEXT_1) +
                 "]");
     }
 
