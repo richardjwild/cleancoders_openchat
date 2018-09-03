@@ -10,6 +10,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.openchat.domain.Post;
 import org.openchat.domain.PostService;
 import org.openchat.domain.User;
+import org.openchat.domain.UserService;
 import org.openchat.environment.Clock;
 import org.openchat.environment.PostIdGenerator;
 import org.openchat.environment.UserIdGenerator;

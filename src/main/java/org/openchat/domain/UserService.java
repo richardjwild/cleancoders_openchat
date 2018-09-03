@@ -1,4 +1,4 @@
-package org.openchat.api;
+package org.openchat.domain;
 
 import org.openchat.domain.User;
 import org.openchat.environment.UserIdGenerator;

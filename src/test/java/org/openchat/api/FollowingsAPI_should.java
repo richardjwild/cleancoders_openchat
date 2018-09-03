@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.openchat.domain.User;
+import org.openchat.domain.UserService;
 import org.openchat.environment.UserIdGenerator;
 import org.openchat.repository.UserRepository;
 

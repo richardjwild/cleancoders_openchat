@@ -6,6 +6,7 @@ import com.eclipsesource.json.JsonObject;
 import org.openchat.domain.Post;
 import org.openchat.domain.PostService;
 import org.openchat.domain.User;
+import org.openchat.domain.UserService;
 import spark.Request;
 import spark.Response;
 

@@ -2,7 +2,7 @@ package org.openchat;
 
 import org.openchat.api.FollowingsAPI;
 import org.openchat.api.LoginAPI;
-import org.openchat.api.UserService;
+import org.openchat.domain.UserService;
 import org.openchat.api.UsersAPI;
 import org.openchat.domain.PostService;
 import org.openchat.environment.Clock;
