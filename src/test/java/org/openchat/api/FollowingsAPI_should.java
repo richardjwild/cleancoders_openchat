@@ -12,6 +12,7 @@ import org.openchat.repository.UserRepository;
 
 import java.util.UUID;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -88,6 +89,7 @@ public class FollowingsAPI_should extends RestApiTest {
     public void create_a_following_relationship() throws JSONException {
         User follower = new User(FOLLOWER_ID, FOLLOWER_NAME, ABOUT_FOLLOWER, FOLLOWER_PASSWORD);
         User toFollow = new User(FOLLOWING_USER_1_ID, FOLLOWING_USER_1_NAME, ABOUT_USER_1_FOLLOWING, FOLLOWING_USER_1_PASSWORD);
+        given(userRepository.retrieveUsers()).willReturn(asList(follower, toFollow));
         givenRequestBody("{" +
                 "\"followerId\":\"" + FOLLOWER_ID + "\"," +
                 "\"followeeId\":\"" + FOLLOWING_USER_1_ID + "\"" +
