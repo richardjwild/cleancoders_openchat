@@ -28,6 +28,16 @@ public class InMemoryRepository implements PostRepository, UserRepository {
     }
 
     @Override
+    public void updateUser(User userToUpdate) {
+        for (User user : users) {
+            if (user.is(userToUpdate.id())) {
+                users.remove(user);
+                users.add(userToUpdate);
+            }
+        }
+    }
+
+    @Override
     public List<User> retrieveUsers() {
         return users;
     }

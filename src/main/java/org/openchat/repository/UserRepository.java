@@ -9,4 +9,6 @@ public interface UserRepository {
     void storeUser(User user);
 
     List<User> retrieveUsers();
+
+    void updateUser(User follower);
 }

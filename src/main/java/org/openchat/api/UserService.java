@@ -42,4 +42,8 @@ public class UserService {
                 .filter(user -> user.is(followerId))
                 .findFirst();
     }
+
+    public void saveUser(User user) {
+        userRepository.updateUser(user);
+    }
 }
