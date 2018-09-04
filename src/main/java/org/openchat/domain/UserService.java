@@ -3,6 +3,8 @@ package org.openchat.domain;
 import org.openchat.environment.UserIdGenerator;
 import org.openchat.repository.UserRepository;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -64,5 +66,11 @@ public class UserService {
 
     private Function<User, Boolean> isFollowedBy(User follower) {
         return followee -> follower.usersFollowing().contains(followee);
+    }
+
+    public Collection<User> usersFollowing(String followerId) {
+        return findUser(followerId)
+                .map(User::usersFollowing)
+                .orElseGet(Collections::emptyList);
     }
 }

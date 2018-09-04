@@ -11,6 +11,9 @@ import static org.eclipse.jetty.http.HttpStatus.*;
 
 public class FollowingsAPI extends OpenChatAPI {
 
+    private static final String FOLLOWING_ALREADY_EXISTS = "Following already exists.";
+    private static final String FOLLOWING_CREATED = "Following created.";
+
     private UserService userService;
 
     public FollowingsAPI(UserService userService) {
@@ -19,14 +22,12 @@ public class FollowingsAPI extends OpenChatAPI {
 
     public String usersFollowing(Request request, Response response) {
         String followerId = request.params("followerId");
-        JsonArray json = new JsonArray();
         response.status(OK_200);
         response.type(ContentType.APPLICATION_JSON);
-        userService.findUser(followerId).ifPresent(follower ->
-                follower.usersFollowing().stream()
-                        .map(this::jsonUser)
-                        .forEach(json::add));
-        return json.toString();
+        return userService.usersFollowing(followerId).stream()
+                .map(this::jsonUser)
+                .reduce(new JsonArray(), JsonArray::add, UNUSED_COMBINER)
+                .toString();
     }
 
     public String createFollowingRelationship(Request request, Response response) {
@@ -36,11 +37,11 @@ public class FollowingsAPI extends OpenChatAPI {
         response.type(ContentType.APPLICATION_JSON);
         if (userService.isAlreadyFollowing(followerId, followeeId)) {
             response.status(BAD_REQUEST_400);
-            return "Following already exists.";
+            return FOLLOWING_ALREADY_EXISTS;
         } else {
             userService.createFollowingRelationship(followerId, followeeId);
             response.status(CREATED_201);
         }
-        return "Following created.";
+        return FOLLOWING_CREATED;
     }
 }
