@@ -8,13 +8,15 @@ import org.openchat.domain.User;
 import java.time.format.DateTimeFormatter;
 import java.util.function.BinaryOperator;
 
-public class OpenChatAPI {
-    protected static final BinaryOperator<JsonArray> UNUSED_COMBINER = (a, b) -> {
-        throw new UnsupportedOperationException("To use a parallel stream this combiner must be implemented");
-    };
+abstract class OpenChatAPI {
+
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
-    protected JsonObject jsonPost(Post post) {
+    static final BinaryOperator<JsonArray> UNUSED_COMBINER = (a, b) -> {
+        throw new UnsupportedOperationException("To use a parallel stream this combiner must be implemented");
+    };
+
+    JsonObject jsonPost(Post post) {
         return new JsonObject()
                 .add("text", post.text())
                 .add("dateTime", post.dateTime().format(DATETIME_FORMATTER))
@@ -22,7 +24,7 @@ public class OpenChatAPI {
                 .add("postId", post.postId());
     }
 
-    protected JsonObject jsonUser(User user) {
+    JsonObject jsonUser(User user) {
         return new JsonObject()
                 .add("id", user.id())
                 .add("username", user.username())
