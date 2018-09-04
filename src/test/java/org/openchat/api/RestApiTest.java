@@ -12,6 +12,7 @@ import static org.mockito.BDDMockito.given;
 public class RestApiTest {
     protected static final int CREATED = 201;
     protected static final int OK = 200;
+    protected static final int BAD_REQUEST = 400;
     private static final boolean STRICT = true;
     @Mock
     protected Request request;

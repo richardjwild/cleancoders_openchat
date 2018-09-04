@@ -7,8 +7,7 @@ import org.openchat.domain.UserService;
 import spark.Request;
 import spark.Response;
 
-import static org.eclipse.jetty.http.HttpStatus.CREATED_201;
-import static org.eclipse.jetty.http.HttpStatus.OK_200;
+import static org.eclipse.jetty.http.HttpStatus.*;
 
 public class FollowingsAPI extends OpenChatAPI {
 
@@ -34,14 +33,14 @@ public class FollowingsAPI extends OpenChatAPI {
         JsonObject body = Json.parse(request.body()).asObject();
         String followerId = body.getString("followerId", null);
         String followeeId = body.getString("followeeId", null);
-        userService.findUser(followerId).ifPresent(follower -> {
-            userService.findUser(followeeId).ifPresent(followee -> {
-                follower.follow(followee);
-                userService.saveUser(follower);
-            });
-        });
-        response.status(CREATED_201);
         response.type(ContentType.APPLICATION_JSON);
-        return "";
+        if (userService.isAlreadyFollowing(followerId, followeeId)) {
+            response.status(BAD_REQUEST_400);
+            return "Following already exists.";
+        } else {
+            userService.createFollowingRelationship(followerId, followeeId);
+            response.status(CREATED_201);
+        }
+        return "Following created.";
     }
 }

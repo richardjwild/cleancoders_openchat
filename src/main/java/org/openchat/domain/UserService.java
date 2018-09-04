@@ -5,6 +5,7 @@ import org.openchat.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class UserService {
 
@@ -44,5 +45,24 @@ public class UserService {
 
     public void saveUser(User user) {
         userRepository.updateUser(user);
+    }
+
+    public void createFollowingRelationship(String followerId, String followeeId) {
+        findUser(followerId).ifPresent(follower -> {
+            findUser(followeeId).ifPresent(followee -> {
+                follower.follow(followee);
+                saveUser(follower);
+            });
+        });
+    }
+
+    public boolean isAlreadyFollowing(String followerId, String followeeId) {
+        return findUser(followerId)
+                .flatMap(follower -> findUser(followeeId).map(isFollowedBy(follower)))
+                .orElse(false);
+    }
+
+    private Function<User, Boolean> isFollowedBy(User follower) {
+        return followee -> follower.usersFollowing().contains(followee);
     }
 }

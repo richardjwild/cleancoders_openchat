@@ -15,6 +15,7 @@ import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -102,7 +103,24 @@ public class FollowingsAPI_should extends RestApiTest {
         verify(userRepository).updateUser(follower);
         verify(response).status(CREATED);
         verify(response).type("application/json");
-        assertJson(actual, "");
+        assertJson(actual, "Following created.");
     }
 
+    @Test
+    public void not_create_a_relationship_twice() {
+        User follower = new User(FOLLOWER_ID, FOLLOWER_NAME, ABOUT_FOLLOWER, FOLLOWER_PASSWORD);
+        User beingFollowed = new User(FOLLOWING_USER_1_ID, FOLLOWING_USER_1_NAME, ABOUT_USER_1_FOLLOWING, FOLLOWING_USER_1_PASSWORD);
+        follower.follow(beingFollowed);
+        given(userRepository.retrieveUsers()).willReturn(asList(follower, beingFollowed));
+        givenRequestBody("{" +
+                "\"followerId\":\"" + FOLLOWER_ID + "\"," +
+                "\"followeeId\":\"" + FOLLOWING_USER_1_ID + "\"" +
+                "}");
+
+        String actual = followingsAPI.createFollowingRelationship(request, response);
+
+        verify(response).status(BAD_REQUEST);
+        verify(response).type("application/json");
+        assertThat(actual).isEqualTo("Following already exists.");
+    }
 }
