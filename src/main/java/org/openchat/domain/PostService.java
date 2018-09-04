@@ -49,15 +49,6 @@ public class PostService {
         return post;
     }
 
-    public Collection<Post> wallPosts(User follower) {
-        return followerPlusTheirFollowees(follower)
-                .map(User::id)
-                .map(this::timelineFor)
-                .flatMap(Collection::stream)
-                .sorted(comparing(Post::dateTime).reversed())
-                .collect(Collectors.toList());
-    }
-
     public Collection<Post> wallPosts(String followerId) {
         return userService.findUser(followerId)
                 .map(follower -> followerPlusTheirFollowees(follower)
