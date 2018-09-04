@@ -57,8 +57,8 @@ public class UsersAPI_should extends RestApiTest {
 
     @Before
     public void setup() {
-        PostService postService = new PostService(clock, postIdGenerator, postRepository);
         UserService userService = new UserService(userIdGenerator, userRepository);
+        PostService postService = new PostService(clock, postIdGenerator, postRepository, userService);
         usersAPI = new UsersAPI(postService, userService);
         inOrder = Mockito.inOrder(response);
     }

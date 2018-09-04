@@ -26,8 +26,8 @@ public class Routes {
 
     private void createAPIs() {
         InMemoryRepository repository = new InMemoryRepository();
-        PostService postService = new PostService(new Clock(), new PostIdGenerator(), repository);
         UserService userService = new UserService(new UserIdGenerator(), repository);
+        PostService postService = new PostService(new Clock(), new PostIdGenerator(), repository, userService);
         usersAPI = new UsersAPI(postService, userService);
         loginAPI = new LoginAPI(userService);
         followingsAPI = new FollowingsAPI(userService);

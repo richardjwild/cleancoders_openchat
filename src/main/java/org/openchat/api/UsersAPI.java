@@ -10,7 +10,6 @@ import org.openchat.domain.UserService;
 import spark.Request;
 import spark.Response;
 
-import static java.util.Comparator.comparing;
 import static org.eclipse.jetty.http.HttpStatus.CREATED_201;
 import static org.eclipse.jetty.http.HttpStatus.OK_200;
 
@@ -66,13 +65,11 @@ public class UsersAPI extends OpenChatAPI {
 
     public String wall(Request request, Response response) {
         String userId = request.params("userId");
-        JsonArray json = new JsonArray();
-        userService.findUser(userId).ifPresent(follower ->
-                postService.wallPosts(follower).stream()
-                        .map(this::jsonPost)
-                        .forEach(json::add));
         response.status(OK_200);
         response.type(ContentType.APPLICATION_JSON);
-        return json.toString();
+        return postService.wallPosts(userId).stream()
+                .map(this::jsonPost)
+                .reduce(new JsonArray(), JsonArray::add, UNUSED_COMBINER)
+                .toString();
     }
 }
