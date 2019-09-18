@@ -5,6 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openchat.OpenChat;
+import org.openchat.Routes;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
@@ -26,7 +27,7 @@ public class APITestSuit {
 
     @BeforeClass
     public static void setUp() {
-        openChat = new OpenChat();
+        openChat = new OpenChat(new Routes());
         openChat.start();
         openChat.awaitInitialization();
     }

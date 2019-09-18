@@ -14,7 +14,11 @@ public class OpenChat {
     private static final String API_NOT_IMPLEMENTED = "API not implemented.";
     private static final String INTERNAL_SERVER_ERROR = "Internal server error.";
 
-    private Routes routes = new Routes();
+    private final Routes routes;
+
+    public OpenChat(Routes routes) {
+        this.routes = routes;
+    }
 
     public void start() {
         port(4321);
