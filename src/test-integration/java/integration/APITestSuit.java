@@ -27,7 +27,8 @@ public class APITestSuit {
 
     @BeforeClass
     public static void setUp() {
-        openChat = new OpenChat(new Routes());
+        Routes routes = new Routes();
+        openChat = new OpenChat(routes);
         openChat.start();
         openChat.awaitInitialization();
     }
