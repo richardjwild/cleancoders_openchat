@@ -1,11 +1,16 @@
 package integration;
 
+import integration.repository.InMemoryUsersRepository;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openchat.OpenChat;
 import org.openchat.Routes;
+import org.openchat.login.api.LoginController;
+import org.openchat.users.api.UsersController;
+import org.openchat.login.service.LoginService;
+import org.openchat.users.service.UsersService;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
@@ -27,7 +32,12 @@ public class APITestSuit {
 
     @BeforeClass
     public static void setUp() {
-        Routes routes = new Routes();
+        InMemoryUsersRepository usersRepository = new InMemoryUsersRepository();
+        UsersService usersService = new UsersService(usersRepository);
+        UsersController usersController = new UsersController(usersService);
+        LoginService loginService = new LoginService(usersService);
+        LoginController loginController = new LoginController(loginService);
+        Routes routes = new Routes(usersController, loginController);
         openChat = new OpenChat(routes);
         openChat.start();
         openChat.awaitInitialization();

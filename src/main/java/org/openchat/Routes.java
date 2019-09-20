@@ -1,9 +1,19 @@
 package org.openchat;
 
-import static spark.Spark.get;
-import static spark.Spark.options;
+import org.openchat.login.api.LoginController;
+import org.openchat.users.api.UsersController;
+
+import static spark.Spark.*;
 
 public class Routes {
+
+    private UsersController usersController;
+    private LoginController loginController;
+
+    public Routes(UsersController usersController, LoginController loginController) {
+        this.usersController = usersController;
+        this.loginController = loginController;
+    }
 
     public void create() {
         swaggerRoutes();
@@ -12,6 +22,8 @@ public class Routes {
 
     private void openchatRoutes() {
         get("status", (req, res) -> "OpenChat: OK!");
+        post("/users", (req, res) -> usersController.create(req, res));
+        post("/login", (req, res) -> loginController.login(req, res));
     }
 
     private void swaggerRoutes() {
